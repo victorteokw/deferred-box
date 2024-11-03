@@ -1,6 +1,7 @@
 use std::cell::UnsafeCell;
 use std::fmt::Debug;
 
+#[derive(Debug)]
 pub struct DeferredBox<T> {
     unsafe_cell: UnsafeCell<Option<T>>,
 }
