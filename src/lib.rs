@@ -16,6 +16,15 @@ impl <T> DeferredBox<T> {
         (unsafe { &*self.unsafe_cell.get() }).as_ref()
     }
 
+    pub fn get_or_init<F>(&self, init: F) -> &T where F: FnOnce() -> T {
+        if self.get().is_none() {
+            unsafe {
+                *self.unsafe_cell.get() = Some(init());
+            }
+        }
+        self.get().unwrap()
+    }
+
     pub unsafe fn get_mut(&self) -> Option<&mut T> {
         { &mut *self.unsafe_cell.get() }.as_mut()
     }
@@ -73,5 +82,15 @@ mod test {
         assert_eq!(deferred_box.get(), Some(&"hello".to_string()));
         assert_eq!(deferred_box.set("world".to_string()), Err(super::DeferredBoxSetError()));
         assert_eq!(deferred_box.get(), Some(&"hello".to_string()));
+    }
+
+    #[test]
+    fn test_get_or_init() {
+        let deferred_box = super::DeferredBox::new();
+        assert_eq!(deferred_box.get(), None);
+        assert_eq!(deferred_box.get_or_init(|| 1), &1);
+        assert_eq!(deferred_box.get(), Some(&1));
+        assert_eq!(deferred_box.get_or_init(|| 2), &1);
+        assert_eq!(deferred_box.get(), Some(&1));
     }
 }

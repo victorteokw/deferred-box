@@ -18,6 +18,7 @@ let deferred_box = DeferredBox::new();
 deferred_box.get(); // None
 deferred_box.set(42);
 deferred_box.get(); // Some(&42)
+deferred_box.get_or_init(|| 0); // &42
 ```
 
 ## License
