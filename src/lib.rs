@@ -70,29 +70,31 @@ impl Debug for DeferredBoxSetError {
 
 #[cfg(test)]
 mod test {
+    use super::*;
+
     #[test]
     fn test_deferred_box_for_number() {
-        let deferred_box = super::DeferredBox::new();
+        let deferred_box = DeferredBox::new();
         assert_eq!(deferred_box.get(), None);
         assert_eq!(deferred_box.set(1), Ok(()));
         assert_eq!(deferred_box.get(), Some(&1));
-        assert_eq!(deferred_box.set(2), Err(super::DeferredBoxSetError()));
+        assert_eq!(deferred_box.set(2), Err(DeferredBoxSetError()));
         assert_eq!(deferred_box.get(), Some(&1));
     }
 
     #[test]
     fn test_deferred_box_for_string() {
-        let deferred_box = super::DeferredBox::new();
+        let deferred_box = DeferredBox::new();
         assert_eq!(deferred_box.get(), None);
         assert_eq!(deferred_box.set("hello".to_string()), Ok(()));
         assert_eq!(deferred_box.get(), Some(&"hello".to_string()));
-        assert_eq!(deferred_box.set("world".to_string()), Err(super::DeferredBoxSetError()));
+        assert_eq!(deferred_box.set("world".to_string()), Err(DeferredBoxSetError()));
         assert_eq!(deferred_box.get(), Some(&"hello".to_string()));
     }
 
     #[test]
     fn test_get_or_init() {
-        let deferred_box = super::DeferredBox::new();
+        let deferred_box = DeferredBox::new();
         assert_eq!(deferred_box.get(), None);
         assert_eq!(deferred_box.get_or_init(|| 1), &1);
         assert_eq!(deferred_box.get(), Some(&1));
@@ -102,7 +104,7 @@ mod test {
 
     #[test]
     fn test_debug_message() {
-        let deferred_box: super::DeferredBox<i32> = super::DeferredBox::new();
+        let deferred_box: DeferredBox<i32> = DeferredBox::new();
         deferred_box.set(50).unwrap();
         assert_eq!(&format!("{:?}", deferred_box), "DeferredBox { Some(50) })");
     }
