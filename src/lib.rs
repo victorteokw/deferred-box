@@ -35,6 +35,15 @@ impl <T> DeferredBox<T> {
     }
 }
 
+impl<T> Default for DeferredBox<T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+unsafe impl<T> Send for DeferredBox<T> { }
+unsafe impl<T> Sync for DeferredBox<T> { }
+
 #[derive(Eq, PartialEq, Copy, Clone)]
 pub struct DeferredBoxSetError();
 
