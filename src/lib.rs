@@ -1,7 +1,6 @@
 use std::cell::UnsafeCell;
-use std::fmt::Debug;
+use std::fmt::{Debug, Formatter};
 
-#[derive(Debug)]
 pub struct DeferredBox<T> {
     unsafe_cell: UnsafeCell<Option<T>>,
 }
@@ -51,14 +50,20 @@ impl<T> Default for DeferredBox<T> {
     }
 }
 
-unsafe impl<T> Send for DeferredBox<T> { }
-unsafe impl<T> Sync for DeferredBox<T> { }
+unsafe impl<T> Send for DeferredBox<T> where T: Send { }
+unsafe impl<T> Sync for DeferredBox<T> where T: Sync { }
+
+impl<T> Debug for DeferredBox<T> where T: Debug {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "DeferredBox {{ {:?} }})", self.get())
+    }
+}
 
 #[derive(Eq, PartialEq, Copy, Clone)]
 pub struct DeferredBoxSetError();
 
 impl Debug for DeferredBoxSetError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "value has been set, trying to set it twice")
     }
 }
@@ -93,5 +98,12 @@ mod test {
         assert_eq!(deferred_box.get(), Some(&1));
         assert_eq!(deferred_box.get_or_init(|| 2), &1);
         assert_eq!(deferred_box.get(), Some(&1));
+    }
+
+    #[test]
+    fn test_debug_message() {
+        let deferred_box: super::DeferredBox<i32> = super::DeferredBox::new();
+        deferred_box.set(50).unwrap();
+        assert_eq!(&format!("{:?}", deferred_box), "DeferredBox { Some(50) })");
     }
 }

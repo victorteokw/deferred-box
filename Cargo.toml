@@ -1,6 +1,6 @@
 [package]
 name = "deferred-box"
-version = "0.1.3"
+version = "0.1.4"
 description = "Defer the value set after the struct has been initialized"
 edition = "2021"
 license = "MIT"
