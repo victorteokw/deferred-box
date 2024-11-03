@@ -1,8 +1,9 @@
 [package]
 name = "deferred-box"
 version = "0.1.0"
+description = "Defer the value set to after the struct is initialized"
 edition = "2021"
 license = "MIT"
-
+repository = "https://github.com/victorteokw/deferred-box"
 
 [dependencies]
